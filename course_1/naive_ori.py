@@ -9,8 +9,9 @@ def pattern_count(text, pattern):
     return indices
 
 
-with open("./course_1/Vibrio_cholerae.txt") as data_set:
+with open("./course_1/inputs/Vibrio_cholerae.txt") as data_set:
     p = "ATGATCAAG"
     t = data_set.readline()
-    r = pattern_count(t.strip(), p.strip())
+    r = pattern_count("AAACATAGGATCAAC", "AA")
+    print(len(r))
     print(" ".join([str(i) for i in r]))

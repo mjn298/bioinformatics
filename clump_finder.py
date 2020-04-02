@@ -25,13 +25,16 @@ def clump_finder(text, k, l, t):
     return " ".join([r for r in rs])
 
 
-with open("./course_1/inputs/clump_test.txt") as data_set:
-    text = data_set.readline().strip()
-    ks = data_set.readline().strip()
-    input_nums = [int(i) for i in ks.split(" ")]
-    k = input_nums[0]
-    l = input_nums[1]
-    t = input_nums[2]
-    t1 = time.time()
-    print(clump_finder(text, k, l, t))
-    print(time.time() - t1)
+# with open("./course_1/inputs/E_coli.txt") as data_set:
+#     text = data_set.readline().strip()
+#     ks = data_set.readline().strip()
+#     #input_nums = [int(i) for i in ks.split(" ")]
+#     #k = input_nums[0]
+#     #l = input_nums[1]
+#     #t = input_nums[2]
+#     t1 = time.time()
+#     print(clump_finder(text, 9, 500, 3))
+#     print(time.time() - t1)
+
+dude = 0
+print(str(dude += 1))
