@@ -8,11 +8,3 @@ def most_frequent(text, k):
         if kmers.get(kmer, 0) > max:
             max = kmers.get(kmer, 0)
     return [k for k, v in kmers.items() if v >= max]
-
-
-print(most_frequent("CGCCTAAATAGCCTCGCGGAGCCTTATGTCATACTCGTCCT", 3))
-
-# with open("./course_1/dataset_2_10.txt") as data_set:
-#     text = data_set.readline().strip()
-#     k = data_set.readline().strip()
-#     print(" ".join(most_frequent(text, int(k))))

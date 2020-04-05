@@ -40,10 +40,3 @@ def computing_frequencies(t, k):
         j = pattern_to_number(p)
         freq_arr[j] = freq_arr[j] + 1
     return freq_arr
-
-
-with open('./course_1/dataset_2994_5.txt') as data_set:
-    t = data_set.readline().strip()
-    k = int(data_set.readline().strip())
-    r = computing_frequencies(t, k)
-    print(" ".join([str(i) for i in r]))

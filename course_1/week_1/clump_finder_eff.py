@@ -21,16 +21,3 @@ def clump_finder_eff(text, k, l, t):
         if all_kmers[curr_kmer] >= t:
             frequent_kmers.add(curr_kmer)
     return frequent_kmers
-
-
-with open("./course_1/inputs/E_coli.txt") as data_set:
-    text = data_set.readline().strip()
-    ks = data_set.readline().strip()
-    # input_nums = [int(i) for i in ks.split(" ")]
-    # k = input_nums[0]
-    # l = input_nums[1]
-    # t = input_nums[2]
-    t1 = time.time()
-    res = clump_finder_eff(text, 9, 500, 3)
-    print(time.time() - t1)
-    print(len(res))
