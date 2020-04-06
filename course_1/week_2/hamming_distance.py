@@ -1,7 +1,5 @@
-import time
-import operator
 from collections import defaultdict
-from collections import OrderedDict
+from course_1.week_1 import reverse_complement
 
 
 def freq_set(text, k):
@@ -37,16 +35,15 @@ def approx_naive(pattern, genome, distance):
 
 def immediate_neighbors(patt):
     neighborhood = set()
+    neighborhood.add(patt)
     bases = ['A', 'T', 'G', 'C']
-    k_list = [*patt]
     for i in range(len(patt)):
         for b in bases:
+            k_list = [*patt]
             if k_list[i] != b:
-                tc = k_list[i]
                 k_list[i] = b
                 k_string = "".join(k_list)
                 neighborhood.add(k_string)
-                k_list[i] = tc
     return neighborhood
 
 
@@ -55,81 +52,69 @@ def neighbors_2(patt, d):
     neighborhood.add(patt)
     res = set()
     for i in range(d):
+        inner_set = res.copy()
         while neighborhood:
             nb = neighborhood.pop()
-            res.add(nb)
             ins = immediate_neighbors(nb)
-            res = res.union(ins)
-        neighborhood = res
+            for n in ins:
+                res.add(n)
+        neighborhood = res.difference(inner_set)
     return res
 
 
-def build_neighborhood(kmer, d):
-    bases = ['A', 'T', 'G', 'C']
-    k_list = [*kmer]
+def neighbors_rec(pattern, d):
+
+    if d == 0:
+        return [pattern]  # It is important to return a list, not just a text
+
+    if len(pattern) == 1:
+        return ["A", "C", "G", "T"]
+
     neighborhood = set()
-    neighborhood.add(kmer)
-    for i in range(d):
-        for k_idx in range(len(k_list)):
-            for b in bases:
-                if b != k_list[k_idx]:
-                    tc = k_list[k_idx]
-                    kl_prime = k_list.copy()
-                    kl_prime[k_idx] = b
-                    k_string = "".join(kl_prime)
-                    neighborhood.add(k_string)
+    suffix = pattern[1:]
+    suffix_neighbors = neighbors_rec(suffix, d)
+
+    for string in suffix_neighbors:
+        if hamming_distance(string, suffix) < d:
+            for symbol in ["A", "C", "G", "T"]:
+                neighborhood.add(symbol + string)
+        else:
+            neighborhood.add(pattern[0] + string)
+
     return neighborhood
 
 
-nb = neighbors_2("AGTCAGTC", 2)
-for n in nb:
-    if hamming_distance("AGTCAGTC", n) > 2:
-        print(n)
+def words_with_mismatches(text, k, d, rc=False):
+    freq_array = defaultdict(int)
+    n = len(text)
+    for i in range(n - k + 1):
+        patt = text[i:i + k]
+        nbs = neighbors_2(patt, d)
+        for p in nbs:
+            freq_array[p] += 1
+        if rc:
+            rev = reverse_complement.get_complement(patt)
+            rns = neighbors_2(rev, d)
+            for rn in rns:
+                freq_array[rn] += 1
 
-
-def words_with_mismatches(text, k, d):
-    kmers = freq_set(text, k)
-    mf_dict = defaultdict(int)
-    mf_kmers = []
-    max_ct = 0
-    for km in kmers.keys():
-        n_set = neighbors_2(km, d)
-        for neighbor in n_set:
-            mf_dict[neighbor] += 1
-    for km, ct in mf_dict.items():
-        if ct > max_ct:
-            max_ct = ct
-            mf_kmers = [km]
-        elif ct == max_ct:
-            mf_kmers.append(km)
+    max_ct = max(freq_array.values())
     print(max_ct)
-    return mf_kmers
+    return sorted([k for k, v in freq_array.items() if v >= max_ct])
 
 
 def print_stuff(xs):
     print(" ".join(str(i) for i in xs))
 
 
-# def approximate_match(pattern, genome, distance):
-#     ps = []
-#     last_ham = hamming_distance(genome, pattern[:len(pattern)])
-#     for i in range(len(genome[:len(genome) - len(pattern) + 1])):
-#         if last_ham <= distance:
-#             ps.append(i)
-#         inner_ham = last_ham
-#         for j in range(0, len(pattern)):
-#             if inner_ham > distance:
-#                 break
-#             else:
-#                 inner_ham += hamming_comp(pattern[j], genome(i + j))
+file_name = "./inputs/dataset_9_8.txt"
 
-file_name = "./course_1/week_2/inputs/mismatch_test.txt"
-
-# with open(file_name) as f:
-#     patt = f.readline().strip()
-#     indices = f.readline().strip().split(" ")
-#     # patt = "ACGTTGCATGTCGCATGATGCATGAGAGCT"
-#     # indices = ["4", "1"]
-#     k = int(indices[0])
-#     d = int(indices[1])
-#     print_stuff(words_with_mismatches(patt, k, d))
+with open(file_name) as f:
+    patt = f.readline().strip()
+    indices = f.readline().strip().split(" ")
+    # patt = "ACGTTGCATGTCGCATGATGCATGAGAGCT"
+    # indices = ["4", "1"]
+    k = int(indices[0])
+    d = int(indices[1])
+    thing = words_with_mismatches(patt, k, d, True)
+    print(" ".join(thing))
